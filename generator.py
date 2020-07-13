@@ -118,41 +118,12 @@ class Instance_creator:
     def __init__(self,domain,nb_benchs,min_dom,max_dom,sett,nb_eq,nb_var):
         self.nb_var = nb_var
         self.nb_eq = nb_eq
-        self.poolsize = poolsize
-        self.P = P
-        self.Q = Q
-        self.nb_inst = nb_inst
-        self.r1 = r1
-        self.r2 = r2
-        self.r3 = r3
-        self.r4 = r4
+        self.nb_benchs = nb_benchs
         self.min_dom = min_dom
         self.max_dom = max_dom
         self.sett = sett
-        self.type_bench = type_bench
-        self.type_pool = type_pool
-        self.Q1 = Q1
-        self.Q2 = Q2
-        #create pool
-        pool = create_pool(self.nb_eq,self.poolsize,self.nb_inst,self.r4,self.type_pool)
-        #create sets
-        list_sets = create_pool_expressions(self.P,self.Q,pool)
-        list_sets2 = create_pool_expressions(self.nb_eq,self.Q1,pool)
-        list_sets3 = create_pool_expressions(self.nb_eq,self.Q2,pool)
-        #create product
-        list_expressions = create_expressions(list_sets,self.nb_eq,self.P)
-        list_expressions2 = create_expressions(list_sets2,self.nb_eq,self.nb_eq)
-        list_expressions3 = create_expressions(list_sets3,self.nb_eq,self.nb_eq)
-        #Q1set,Q2set = create_two_expressions(list_sets,self.nb_eq,self.P)
-        #create constraint
-        if type_bench == 'sum':
-            constraints = create_constraints(list_expressions,self.r1,self.r2,self.r3,self.type_bench)
-        elif type_bench == 'two-sums':
-             constraint1 = create_constraints(list_expressions2,self.r1,self.r2,self.r3,'sum')
-             constraint2 = create_constraints(list_expressions3,self.r1,self.r2,self.r3,'sum')
-             constraints = [list() for _ in xrange(len(constraint1))]
-             for i in range(0,len(constraints)):
-                constraints[i] = constraint1[i]+'*'+constraint2[i]
+        #create constraints
+        constraints = create_constraints(list_expressions,self.r1,self.r2,self.r3,self.type_bench)
         #evaluate each constraint with a tuple (x0,x1....,xn)
         constraints,solution = evaluate_constraints(constraints,self.min_dom,self.max_dom)
         #create file
