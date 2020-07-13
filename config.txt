@@ -1,7 +1,7 @@
 [default]
 
 sets = test1 test2
-
+d
 #domain for creating solutions
 domain = -1 1
 #seed
