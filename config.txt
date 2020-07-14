@@ -9,7 +9,7 @@ random_seed = 1
 #number of benchmarks for each test
 nb_benchs = 10
 # coefficients
-c = -100 100
+coef = -100 100
 
 [test1]
 nb_eq = 5

@@ -115,16 +115,75 @@ class NumericStringParser(object):
         return val
 
 class Instance_creator:
-    def __init__(self,domain,nb_benchs,min_dom,max_dom,sett,nb_eq,nb_var):
-        self.nb_var = nb_var
+    def __init__(self,min_dom,max_dom,sett,nb_eq,nb_var,min_coef,max_coef):
         self.nb_eq = nb_eq
+        self.nb_var = nb_var
         self.nb_benchs = nb_benchs
         self.min_dom = min_dom
         self.max_dom = max_dom
         self.sett = sett
+        self.min_coef = min_coef
+        self.max_coef = max_coef
+        self.sett = sett
         #create constraints
-        constraints = create_constraints(list_expressions,self.r1,self.r2,self.r3,self.type_bench)
+        constraints = create_constraints(self.nb_eq,self.nb_var,self.min_coef,self.max_coef)
         #evaluate each constraint with a tuple (x0,x1....,xn)
         constraints,solution = evaluate_constraints(constraints,self.min_dom,self.max_dom)
         #create file
-        create_file(constraints,solution,self.min_dom,self.max_dom,self.nb_inst,self.nb_var,self.sett)
+        create_file(constraint,solution,self.min_dom,self.max_dom,self.nb_inst,self.nb_var)
+
+def constraints(nb_eq,nb_var,min_dom,max_dom):
+    constraints = [list() for _ in xrange(nb_eq)]
+
+    return list_constraints
+
+class Params:
+    def __init__(self, configParser):
+        self.configParser=configParser
+        self.set_parameters("default")
+
+
+    def set_parameters(self, name):
+        self.set = name
+
+        if configParser.has_option(name,  'nb_eq'):
+            self.nb_eq = int(configParser.get(name, 'nb_eq'))
+
+        if configParser.has_option(name,  'nb_var'):
+            self.nb_var = int(configParser.get(name, 'nb_var'))
+
+        if configParser.has_option(name,  'dom'):
+            self.lbdom,self.ubdom = configParser.get(name, 'dom').split()
+            self.lbdom = int(self.lbdom)
+            self.ubdom = int(self.ubdom)
+
+        if configParser.has_option(name,  'random_seed'):
+            self.random_seed = int(configParser.get(name, 'random_seed'))
+
+        if configParser.has_option(name,  'coef'):
+            self.lbcoef,self.ubcoef = configParser.get(name, 'coef').split()
+            self.lbcoef = int(self.lbcoef)
+            self.ubcoef = int(self.ubcoef)
+
+        if configParser.has_option(name, 'nb_benchs'):
+            self.nb_benchs = int(configParser.get(name, 'nb_benchs'))
+
+if __name__ == '__main__':
+
+    configParser = ConfigParser.RawConfigParser()
+    configParser.read("config.txt")
+
+    p = Params(configParser)
+    random.seed(p.random_seed)
+
+    for sett in configParser.get('default', 'sets').split():
+        p.set_parameters('default')
+        p.set_parameters(sett)
+
+        #number of constraints per equation
+        for i in range(1, p.nb_benchs+1):
+            Instance_creator(p.lbdom,p.ubdom,p.set,p.nb_eq,p.nb_var,p.lbcoef,p.ubcoef)
+        if p.nb_inst == 1:
+            print str(p.nb_benchs)+' instance has been created!'
+        else:
+            print str(p.nb_benchs)+' instances have been created!'
