@@ -1,6 +1,6 @@
 [default]
 
-sets = test1 test2
+sets = test1 test2 test3
 
 #domain for creating solutions
 domain = -2 2
@@ -18,3 +18,7 @@ nb_var = 10
 [test2]
 nb_eq = 15
 nb_var = 30
+
+[test3]
+nb_eq = 20
+nb_var = 50
