@@ -3,7 +3,7 @@
 sets = test1 test2
 
 #domain for creating solutions
-domain = -1 1
+domain = -2 2
 #seed
 random_seed = 1
 #number of benchmarks for each test
