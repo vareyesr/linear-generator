@@ -19,7 +19,7 @@ import os
 import sys
 
 class Instance_creator:
-    def __init__(self,min_dom,max_dom,sett,nb_eq,nb_var,min_coef,max_coef):
+    def __init__(self,min_dom,max_dom,sett,nb_eq,nb_var,min_coef,max_coef,bench_id):
         self.nb_eq = nb_eq
         self.nb_var = nb_var
         self.min_dom = min_dom
@@ -27,12 +27,13 @@ class Instance_creator:
         self.sett = sett
         self.min_coef = min_coef
         self.max_coef = max_coef
+        self.bench_id = bench_id
         #create constraints
         constraints = create_constraints(self.nb_eq,self.nb_var,self.min_coef,self.max_coef)
         #evaluate each constraint with a tuple (x0,x1....,xn)
         constraints,solution = evaluate_constraints(constraints,self.min_dom,self.max_dom)
         #create file
-        #create_file(constraint,solution,self.min_dom,self.max_dom,self.nb_inst,self.nb_var)
+        create_file(constraints,solution,self.min_dom,self.max_dom,self.sett,self.bench_id)
 
 def create_constraints(nb_eq,nb_var,min_coef,max_coef):
     list_constraints = [list() for _ in xrange(nb_eq)]
@@ -55,6 +56,26 @@ def evaluate_constraints(constraints,min_dom,max_dom):
             current_value = current_value + constraints[i][j]*solution[j]
         constraints[i].append(current_value)
     return constraints, solution
+
+def create_file(constraint,solution,min_dom,max_dom,sett,bench_id):
+    if not os.path.exists('benchs'):
+        os.makedirs('benchs')
+    if not os.path.exists('benchs/'+sett):
+        os.makedirs('benchs/'+sett)
+    completeName = os.path.join('benchs/'+sett, 'problem'+ "%03d" % (bench_id)+ ".txt")
+    f = open(completeName,"w+")
+    f.write('//'+'One known solution for this problem is:\n')
+    f.write('//')
+    for i in range (0, len(solution)):
+        f.write(str(solution[i])+',')
+    f.write('\n')
+    f.write(str(len(constraint))+'\n')
+    f.write(str(len(solution))+'\n')
+    for i in range(0,len(constraint)):
+        for j in range(0,len(constraint[i])):
+            f.write(str(constraint[i][j])+' ')
+        f.write('\n')
+    f.write('end')
 
 
 class Params:
@@ -102,7 +123,7 @@ if __name__ == '__main__':
 
         #number of constraints per equation
         for i in range(1, p.nb_benchs+1):
-            Instance_creator(p.lbdom,p.ubdom,p.set,p.nb_eq,p.nb_var,p.lbcoef,p.ubcoef)
+            Instance_creator(p.lbdom,p.ubdom,p.set,p.nb_eq,p.nb_var,p.lbcoef,p.ubcoef,i)
         if p.nb_benchs == 1:
             print str(p.nb_benchs)+' instance has been created!'
         else:
