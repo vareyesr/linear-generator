@@ -64,18 +64,12 @@ def create_file(constraint,solution,min_dom,max_dom,sett,bench_id):
         os.makedirs('benchs/'+sett)
     completeName = os.path.join('benchs/'+sett, 'problem'+ "%03d" % (bench_id)+ ".txt")
     f = open(completeName,"w+")
-    f.write('//'+'One known solution for this problem is:\n')
-    f.write('//')
-    for i in range (0, len(solution)):
-        f.write(str(solution[i])+',')
-    f.write('\n')
     f.write(str(len(constraint))+'\n')
     f.write(str(len(solution))+'\n')
     for i in range(0,len(constraint)):
         for j in range(0,len(constraint[i])):
             f.write(str(constraint[i][j])+' ')
         f.write('\n')
-    f.write('end')
 
 
 class Params:
