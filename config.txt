@@ -3,13 +3,13 @@
 sets = test1 test2 test3
 
 #domain for creating solutions
-domain = -2 2
+domain = -1 1
 #seed
 random_seed = 1
 #number of benchmarks for each test
 nb_benchs = 10
 # coefficients
-coef = -100 100
+coef = -10 10
 
 [test1]
 nb_eq = 5

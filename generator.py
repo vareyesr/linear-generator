@@ -40,7 +40,7 @@ def create_constraints(nb_eq,nb_var,min_coef,max_coef):
     for i in range(0,len(list_constraints)):
         constraint = []
         for j in range(0,int(nb_var)):
-            constraint.append(random.randint(int(min_coef),int(max_coef)))
+            constraint.append(round(random.uniform(int(min_coef),int(max_coef)),2))
         list_constraints[i] = constraint
     return list_constraints
 
