@@ -58,19 +58,27 @@ def evaluate_constraints(constraints,min_dom,max_dom):
     return constraints, solution
 
 def create_file(constraint,solution,min_dom,max_dom,sett,bench_id):
-    if not os.path.exists('benchs'):
-        os.makedirs('benchs')
-    if not os.path.exists('benchs/'+sett):
-        os.makedirs('benchs/'+sett)
-    completeName = os.path.join('benchs/'+sett, 'problem'+ "%03d" % (bench_id)+ ".txt")
-    f = open(completeName,"w+")
-    f.write(str(len(constraint))+'\n')
-    f.write(str(len(solution))+'\n')
-    for i in range(0,len(constraint)):
-        for j in range(0,len(constraint[i])):
-            f.write(str(constraint[i][j])+' ')
-        f.write('\n')
-
+    initial_domain_lb = -200 ## TODO: set it as input
+    initial_domain_ub = 200 ## TODO: set it as input
+    list_domains = [1,0.95,0.9,0.75,0.5,0.1] ## TODO: set it as input
+    for k in list_domains:
+        if not os.path.exists('benchs'):
+            os.makedirs('benchs')
+        if not os.path.exists('benchs/'+sett):
+            os.makedirs('benchs/'+sett)
+        completeName = os.path.join('benchs/'+sett, 'problem'+ "%03d" % (bench_id)+"_"+(str(k))+".txt")
+        f = open(completeName,"w+")
+        f.write(str(len(constraint))+'\n')
+        f.write(str(len(solution))+'\n')
+        for i in range(0,len(constraint)):
+            for j in range(0,len(constraint[i])):
+                f.write(str(constraint[i][j])+' ')
+            f.write('\n')
+        for i in range(0,len(solution)):
+            alpha = 1-k
+            beta = alpha*(initial_domain_ub-initial_domain_lb)
+            gamma = round(random.uniform(initial_domain_lb,initial_domain_lb+beta),2)
+            f.write(str(gamma)+' '+str(gamma+k*(initial_domain_ub-initial_domain_lb))+'\n')
 
 class Params:
     def __init__(self, configParser):
