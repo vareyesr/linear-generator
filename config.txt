@@ -1,24 +1,44 @@
 [default]
 
-sets = test1 test2 test3
+sets = dense1 dense2 dense3 dense4 dense5 dense6 dense7 dense8
 
 #domain for creating solutions
 domain = -1 1
 #seed
 random_seed = 1
 #number of benchmarks for each test
-nb_benchs = 10
+nb_benchs = 20
 # coefficients
 coef = -10 10
 
-[test1]
-nb_eq = 5
-nb_var = 10
+[dense1]
+nb_eq = 19
+nb_var = 20
 
-[test2]
+[dense2]
+nb_eq = 18
+nb_var = 20
+
+[dense3]
+nb_eq = 17
+nb_var = 20
+
+[dense4]
+nb_eq = 16
+nb_var = 20
+
+[dense5]
 nb_eq = 15
-nb_var = 30
+nb_var = 20
 
-[test3]
-nb_eq = 20
-nb_var = 50
+[dense6]
+nb_eq = 14
+nb_var = 20
+
+[dense7]
+nb_eq = 13
+nb_var = 20
+
+[dense8]
+nb_eq = 12
+nb_var = 20
