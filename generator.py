@@ -42,6 +42,12 @@ def create_constraints(nb_eq,nb_var,min_coef,max_coef):
         for j in range(0,int(nb_var)):
             constraint.append(round(random.uniform(int(min_coef),int(max_coef)),2))
         list_constraints[i] = constraint
+    sparsing_factor = 0.9  ## TODO: set as input
+    for i in range(0,len(list_constraints)):
+        for j in range(0,len(list_constraints[i])):
+            num_prob = random.uniform(0,1)
+            if num_prob > sparsing_factor:
+                list_constraints[i][j] = 0
     return list_constraints
 
 def evaluate_constraints(constraints,min_dom,max_dom):
@@ -49,7 +55,6 @@ def evaluate_constraints(constraints,min_dom,max_dom):
     #a random solution is generated
     for i in range(0, len(constraints[0])):
         solution[i] = random.uniform(min_dom,max_dom)
-
     for i in range(0,len(constraints)):
         current_value = 0.0
         for j in range(0,len(constraints[i])):
@@ -58,9 +63,9 @@ def evaluate_constraints(constraints,min_dom,max_dom):
     return constraints, solution
 
 def create_file(constraint,solution,min_dom,max_dom,sett,bench_id):
-    initial_domain_lb = -200 ## TODO: set it as input
-    initial_domain_ub = 200 ## TODO: set it as input
-    list_domains = [1,0.95,0.9,0.75,0.5,0.1] ## TODO: set it as input
+    initial_domain_lb = -300 ## TODO: set it as input
+    initial_domain_ub = 300 ## TODO: set it as input
+    list_domains = [1,0.95,0.9,0.75,0.5] ## TODO: set it as input
     for k in list_domains:
         if not os.path.exists('benchs'):
             os.makedirs('benchs')
