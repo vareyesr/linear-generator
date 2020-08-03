@@ -19,7 +19,7 @@ import os
 import sys
 
 class Instance_creator:
-    def __init__(self,min_dom,max_dom,sett,nb_eq,nb_var,min_coef,max_coef,bench_id):
+    def __init__(self,min_dom,max_dom,initial_domain_lb,initial_domain_ub,sett,nb_eq,nb_var,min_coef,max_coef,sparsing_factor,bench_id,uniform_dom):
         self.nb_eq = nb_eq
         self.nb_var = nb_var
         self.min_dom = min_dom
@@ -27,22 +27,25 @@ class Instance_creator:
         self.sett = sett
         self.min_coef = min_coef
         self.max_coef = max_coef
+        self.sparsing_factor = sparsing_factor
         self.bench_id = bench_id
+        self.initial_domain_lb = initial_domain_lb
+        self.initial_domain_ub = initial_domain_ub
+        self.uniform_dom = uniform_dom
         #create constraints
-        constraints = create_constraints(self.nb_eq,self.nb_var,self.min_coef,self.max_coef)
+        constraints = create_constraints(self.nb_eq,self.nb_var,self.min_coef,self.max_coef,self.sparsing_factor)
         #evaluate each constraint with a tuple (x0,x1....,xn)
         constraints,solution = evaluate_constraints(constraints,self.min_dom,self.max_dom)
         #create file
-        create_file(constraints,solution,self.min_dom,self.max_dom,self.sett,self.bench_id)
+        create_file(constraints,solution,self.min_dom,self.max_dom,self.initial_domain_lb,self.initial_domain_ub,self.sett,self.bench_id,self.uniform_dom)
 
-def create_constraints(nb_eq,nb_var,min_coef,max_coef):
+def create_constraints(nb_eq,nb_var,min_coef,max_coef,sparsing_factor):
     list_constraints = [list() for _ in xrange(nb_eq)]
     for i in range(0,len(list_constraints)):
         constraint = []
         for j in range(0,int(nb_var)):
             constraint.append(round(random.uniform(int(min_coef),int(max_coef)),2))
         list_constraints[i] = constraint
-    sparsing_factor = 0.9  ## TODO: set as input
     for i in range(0,len(list_constraints)):
         for j in range(0,len(list_constraints[i])):
             num_prob = random.uniform(0,1)
@@ -62,10 +65,8 @@ def evaluate_constraints(constraints,min_dom,max_dom):
         constraints[i].append(current_value)
     return constraints, solution
 
-def create_file(constraint,solution,min_dom,max_dom,sett,bench_id):
-    initial_domain_lb = -300 ## TODO: set it as input
-    initial_domain_ub = 300 ## TODO: set it as input
-    list_domains = [1,0.95,0.9,0.75,0.5] ## TODO: set it as input
+def create_file(constraint,solution,min_dom,max_dom,initial_domain_lb,initial_domain_ub,sett,bench_id,uniform_dom):
+    list_domains = [1] ## TODO: set it as input
     for k in list_domains:
         if not os.path.exists('benchs'):
             os.makedirs('benchs')
@@ -79,11 +80,14 @@ def create_file(constraint,solution,min_dom,max_dom,sett,bench_id):
             for j in range(0,len(constraint[i])):
                 f.write(str(constraint[i][j])+' ')
             f.write('\n')
-        for i in range(0,len(solution)):
-            alpha = 1-k
-            beta = alpha*(initial_domain_ub-initial_domain_lb)
-            gamma = round(random.uniform(initial_domain_lb,initial_domain_lb+beta),2)
-            f.write(str(gamma)+' '+str(gamma+k*(initial_domain_ub-initial_domain_lb))+'\n')
+
+        if (uniform_dom == 'False'):
+            for i in range(0,len(solution)):
+                alpha = round(random.uniform(initial_domain_lb,0),2)
+                f.write(str(alpha)+' '+str(alpha+k*(initial_domain_ub-initial_domain_lb))+'\n')
+        else:
+            for i in range(0,len(solution)):
+                f.write(str(initial_domain_lb)+' '+str(initial_domain_ub)+'\n')
 
 class Params:
     def __init__(self, configParser):
@@ -100,10 +104,21 @@ class Params:
         if configParser.has_option(name,  'nb_var'):
             self.nb_var = int(configParser.get(name, 'nb_var'))
 
-        if configParser.has_option(name,  'domain'):
-            self.lbdom,self.ubdom = configParser.get(name, 'domain').split()
+        if configParser.has_option(name,  'uniform_dom'):
+            self.uniform_dom = str(configParser.get(name, 'uniform_dom'))
+
+        if configParser.has_option(name,  'sparsing_factor'):
+            self.sparsing_factor = float(configParser.get(name, 'sparsing_factor'))
+
+        if configParser.has_option(name,  'domain_solution'):
+            self.lbdom,self.ubdom = configParser.get(name, 'domain_solution').split()
             self.lbdom = int(self.lbdom)
             self.ubdom = int(self.ubdom)
+
+        if configParser.has_option(name,  'domain'):
+            self.initial_domain_lb,self.initial_domain_ub = configParser.get(name, 'domain').split()
+            self.initial_domain_lb = int(self.initial_domain_lb)
+            self.initial_domain_ub = int(self.initial_domain_ub)
 
         if configParser.has_option(name,  'random_seed'):
             self.random_seed = int(configParser.get(name, 'random_seed'))
@@ -130,7 +145,7 @@ if __name__ == '__main__':
 
         #number of constraints per equation
         for i in range(1, p.nb_benchs+1):
-            Instance_creator(p.lbdom,p.ubdom,p.set,p.nb_eq,p.nb_var,p.lbcoef,p.ubcoef,i)
+            Instance_creator(p.lbdom,p.ubdom,p.initial_domain_lb,p.initial_domain_ub,p.set,p.nb_eq,p.nb_var,p.lbcoef,p.ubcoef,p.sparsing_factor,i,p.uniform_dom)
         if p.nb_benchs == 1:
             print str(p.nb_benchs)+' instance has been created!'
         else:

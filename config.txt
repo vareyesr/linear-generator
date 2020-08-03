@@ -3,13 +3,18 @@
 sets = dense1 dense2 dense3 dense4 dense5 dense6 dense7 dense8
 
 #domain for creating solutions
-domain = -1 1
+domain_solution = 0 0
+#domain for variables (the diameter)
+domain = -100 100
+uniform_dom = False
 #seed
 random_seed = 1
 #number of benchmarks for each test
 nb_benchs = 20
 # coefficients
 coef = -10 10
+#sparsing value for better projection
+sparsing_factor = 1
 
 [dense1]
 nb_eq = 19
