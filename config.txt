@@ -11,10 +11,12 @@ uniform_dom = False
 random_seed = 1
 #number of benchmarks for each test
 nb_benchs = 20
+ibex_bench = True
 # coefficients
 coef = -10 10
 #sparsing value for better projection
 sparsing_factor = 1
+
 
 [dense1]
 nb_eq = 19
